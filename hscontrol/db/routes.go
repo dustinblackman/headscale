@@ -476,7 +476,10 @@ func failoverRouteReturnUpdate(
 		return nil, err
 	}
 
-	log.Trace().Interface("isConnected", isConnected).Interface("changedKeys", changedKeys).Msg("building route failover")
+	log.Trace().
+		Interface("isConnected", isConnected).
+		Interface("changedKeys", changedKeys).
+		Msg("building route failover")
 
 	if len(changedKeys) == 0 {
 		return nil, nil

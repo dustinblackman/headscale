@@ -481,7 +481,12 @@ func TestHeadscale_generateGivenName(t *testing.T) {
 				suppliedName: "nodeeee12345678901234567890123456789012345678901234567890123",
 				randomSuffix: true,
 			},
-			want:    regexp.MustCompile(fmt.Sprintf("^nodeeee1234567890123456789012345678901234567890123456-[a-z0-9]{%d}$", NodeGivenNameHashLength)),
+			want: regexp.MustCompile(
+				fmt.Sprintf(
+					"^nodeeee1234567890123456789012345678901234567890123456-[a-z0-9]{%d}$",
+					NodeGivenNameHashLength,
+				),
+			),
 			wantErr: false,
 		},
 	}

@@ -467,7 +467,12 @@ func (h *Headscale) handlePoll(
 				return
 			}
 
-			log.Trace().Str("node", node.Hostname).TimeDiff("timeSpent", time.Now(), startMapResp).Str("mkey", node.MachineKey.String()).Int("type", int(update.Type)).Msg("finished making map response")
+			log.Trace().
+				Str("node", node.Hostname).
+				TimeDiff("timeSpent", time.Now(), startMapResp).
+				Str("mkey", node.MachineKey.String()).
+				Int("type", int(update.Type)).
+				Msg("finished making map response")
 
 			// Only send update if there is change
 			if data != nil {
@@ -489,7 +494,12 @@ func (h *Headscale) handlePoll(
 
 					return
 				}
-				log.Trace().Str("node", node.Hostname).TimeDiff("timeSpent", time.Now(), startWrite).Str("mkey", node.MachineKey.String()).Int("type", int(update.Type)).Msg("finished writing mapresp to node")
+				log.Trace().
+					Str("node", node.Hostname).
+					TimeDiff("timeSpent", time.Now(), startWrite).
+					Str("mkey", node.MachineKey.String()).
+					Int("type", int(update.Type)).
+					Msg("finished writing mapresp to node")
 
 				log.Info().
 					Caller().
@@ -533,7 +543,11 @@ func (h *Headscale) pollFailoverRoutes(logErr func(error, string), where string,
 	}
 
 	if update != nil && !update.Empty() && update.Valid() {
-		ctx := types.NotifyCtx(context.Background(), fmt.Sprintf("poll-%s-routes-ensurefailover", strings.ReplaceAll(where, " ", "-")), node.Hostname)
+		ctx := types.NotifyCtx(
+			context.Background(),
+			fmt.Sprintf("poll-%s-routes-ensurefailover", strings.ReplaceAll(where, " ", "-")),
+			node.Hostname,
+		)
 		h.nodeNotifier.NotifyWithIgnore(ctx, *update, node.MachineKey.String())
 	}
 }

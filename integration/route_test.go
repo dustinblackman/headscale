@@ -806,25 +806,30 @@ func TestEnableDisableAutoApprovedRoute(t *testing.T) {
 		user: 1,
 	}
 
-	err = scenario.CreateHeadscaleEnv(spec, []tsic.Option{tsic.WithTags([]string{"tag:approve"})}, hsic.WithTestName("clienableroute"), hsic.WithACLPolicy(
-		&policy.ACLPolicy{
-			ACLs: []policy.ACL{
-				{
-					Action:       "accept",
-					Sources:      []string{"*"},
-					Destinations: []string{"*:*"},
+	err = scenario.CreateHeadscaleEnv(
+		spec,
+		[]tsic.Option{tsic.WithTags([]string{"tag:approve"})},
+		hsic.WithTestName("clienableroute"),
+		hsic.WithACLPolicy(
+			&policy.ACLPolicy{
+				ACLs: []policy.ACL{
+					{
+						Action:       "accept",
+						Sources:      []string{"*"},
+						Destinations: []string{"*:*"},
+					},
+				},
+				TagOwners: map[string][]string{
+					"tag:approve": {user},
+				},
+				AutoApprovers: policy.AutoApprovers{
+					Routes: map[string][]string{
+						expectedRoutes: {"tag:approve"},
+					},
 				},
 			},
-			TagOwners: map[string][]string{
-				"tag:approve": {user},
-			},
-			AutoApprovers: policy.AutoApprovers{
-				Routes: map[string][]string{
-					expectedRoutes: {"tag:approve"},
-				},
-			},
-		},
-	))
+		),
+	)
 	assertNoErrHeadscaleEnv(t, err)
 
 	allClients, err := scenario.ListTailscaleClients()
