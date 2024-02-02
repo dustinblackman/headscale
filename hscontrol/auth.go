@@ -69,6 +69,14 @@ func (h *Headscale) handleRegister(
 	node, err := h.db.GetNodeByAnyKey(machineKey, registerRequest.NodeKey, registerRequest.OldNodeKey)
 	logTrace("handleRegister database lookup has returned")
 	if errors.Is(err, gorm.ErrRecordNotFound) {
+		if registerRequest.Expiry.IsZero() {
+			if registerRequest.Ephemeral || registerRequest.Auth.AuthKey == "" {
+				registerRequest.Expiry = time.Now().Add(time.Duration(time.Minute * 30))
+			} else {
+				registerRequest.Expiry = time.Now().Add(time.Duration(time.Hour * 24 * 15))
+			}
+		}
+
 		// If the node has AuthKey set, handle registration via PreAuthKeys
 		if registerRequest.Auth.AuthKey != "" {
 			h.handleAuthKey(writer, registerRequest, machineKey)
