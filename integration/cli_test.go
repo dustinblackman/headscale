@@ -678,7 +678,11 @@ func TestNodeAdvertiseTagNoACLCommand(t *testing.T) {
 		"user1": 1,
 	}
 
-	err = scenario.CreateHeadscaleEnv(spec, []tsic.Option{tsic.WithTags([]string{"tag:test"})}, hsic.WithTestName("cliadvtags"))
+	err = scenario.CreateHeadscaleEnv(
+		spec,
+		[]tsic.Option{tsic.WithTags([]string{"tag:test"})},
+		hsic.WithTestName("cliadvtags"),
+	)
 	assertNoErr(t, err)
 
 	headscale, err := scenario.Headscale()
@@ -728,20 +732,25 @@ func TestNodeAdvertiseTagWithACLCommand(t *testing.T) {
 		"user1": 1,
 	}
 
-	err = scenario.CreateHeadscaleEnv(spec, []tsic.Option{tsic.WithTags([]string{"tag:exists"})}, hsic.WithTestName("cliadvtags"), hsic.WithACLPolicy(
-		&policy.ACLPolicy{
-			ACLs: []policy.ACL{
-				{
-					Action:       "accept",
-					Sources:      []string{"*"},
-					Destinations: []string{"*:*"},
+	err = scenario.CreateHeadscaleEnv(
+		spec,
+		[]tsic.Option{tsic.WithTags([]string{"tag:exists"})},
+		hsic.WithTestName("cliadvtags"),
+		hsic.WithACLPolicy(
+			&policy.ACLPolicy{
+				ACLs: []policy.ACL{
+					{
+						Action:       "accept",
+						Sources:      []string{"*"},
+						Destinations: []string{"*:*"},
+					},
+				},
+				TagOwners: map[string][]string{
+					"tag:exists": {"user1"},
 				},
 			},
-			TagOwners: map[string][]string{
-				"tag:exists": {"user1"},
-			},
-		},
-	))
+		),
+	)
 	assertNoErr(t, err)
 
 	headscale, err := scenario.Headscale()
@@ -1240,7 +1249,7 @@ func TestNodeRenameCommand(t *testing.T) {
 	assert.Contains(t, listAll[4].GetGivenName(), "node-5")
 
 	for idx := 0; idx < 3; idx++ {
-		_, err := headscale.Execute(
+		res, err := headscale.Execute(
 			[]string{
 				"headscale",
 				"nodes",
@@ -1251,6 +1260,8 @@ func TestNodeRenameCommand(t *testing.T) {
 			},
 		)
 		assert.Nil(t, err)
+
+		assert.Contains(t, res, "Node renamed")
 	}
 
 	var listAllAfterRename []v1.Node
