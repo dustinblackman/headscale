@@ -1,0 +1,14 @@
+{
+  "acls": [
+    {
+      "action": "accept",
+      "src": [
+        "machine-normal",
+        "machine-ephemeral"
+      ],
+      "dst": [
+        "machine-nginx:80"
+      ]
+    }
+  ]
+}
